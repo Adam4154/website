@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Room Control System - IoT Home Automation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4c5271;
+            --secondary: #4b4976;
+            --accent: #a1b8bc;
+            --light: #0a0a0a;
+            --dark: #151616;
+            --success: #070808;
+            --warning: #5d523f;
+            --danger: #381010;
+            --gray: #132635;
+        }
+
+        body {
+            background-color: rgb(129, 149, 169);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(239, 232, 232, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('rename.jpg');
+            background-size: cover;
+            background-position: center;
+            color: rgb(236, 231, 231);
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Components Section */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .component-img {
+            height: 200px;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .component-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .component-card:hover .component-img img {
+            transform: scale(1.05);
+        }
+
+        .component-content {
+            padding: 1.5rem;
+        }
+
+        .component-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Working Principle */
+        .principle-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .step-content ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .step-content li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* Code Section */
+        .code-container {
+            background: #2d2d2d;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .code-header {
+            background: #1e1e1e;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #ccc;
+        }
+
+        .code-header .language {
+            font-weight: 600;
+        }
+
+        .code-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        pre {
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .code-keyword {
+            color: #ff79c6;
+        }
+
+        .code-function {
+            color: #50fa7b;
+        }
+
+        .code-variable {
+            color: #8be9fd;
+        }
+
+        .code-string {
+            color: #f1fa8c;
+        }
+
+        .code-comment {
+            color: #6272a4;
+        }
+
+        /* Creators Section */
+        .creators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .creator-card {
+            background: rgb(231, 226, 226);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(28, 28, 28, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .creator-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .creator-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--light);
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+        }
+
+        .creator-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .creator-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .creator-role {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        /* Progress Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item:nth-child(odd)::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: white;
+            border: 4px solid var(--primary);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: -10px;
+            background-color: white;
+            border: 4px solid var(--primary);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Contact Section */
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+
+        /* Project Status */
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .status-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .status-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge-inprogress {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-planned {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .video1{
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 1rem 0;
+                text-align: center;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+
+            .timeline-item:nth-child(odd)::after,
+            .timeline-item:nth-child(even)::after {
+                left: 21px;
+            }
+
+            .video1 {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-home"></i>
+                    <span>Smart Room Control System</span>
+                </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <p>A smart room control system featuring automatic lighting and window control based on light intensity, 
+                climate conditioning through temperature-controlled fan operation, and ultrasonic security monitoring. 
+                This system is controlled remotely via Adafruit IO website for IoT integration, using WiFi and MQTT protocol.</p>
+        </div>
+    </section>
+
+   <!-- Team Section -->
+    <section id="team" style="background-color: #9facc0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Project Team</h2>
+                <p>Meet the team behind this Smart Room Control System</p>
+            </div>
+            <div class="creators-grid">
+                <div class="creator-card">
+                    <div class="creator-img">
+                        <img src="photo taken (5).jpg" alt="BIZIMANA Adam">
+                    </div>
+                    <h3 class="creator-name">BIZIMANA Adam</h3>
+                    <p class="creator-role">Project Lead & Hardware Specialist</p>
+                    <p>Responsible for system architecture and hardware integration.</p>
+                </div>
+                <div class="creator-card">
+                    <div class="creator-img">
+                        <img src="provi.PNG" alt="DUKUNDWANIMANA Bien Aime Providance">
+                    </div>
+                    <h3 class="creator-name">DUKUNDWANIMANA Bien Aime Providance</h3>
+                    <p class="creator-role">Software Developer</p>
+                    <p>Developer for website and system software.</p>
+                </div>
+                <div class="creator-card">
+                    <div class="creator-img">
+                        <img src="vtlabs.png" alt="VT Labs Group">
+                    </div>
+                    <h3 class="creator-name">VT Labs Group</h3>
+                    <p class="creator-role">Site and workshop provider</p>
+                    <p>Course site, site management and project requirements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Project Introduction Section -->
+    <section id="project" style="background-color: #9facc0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Project Introduction</h2>
+                <p>A comprehensive overview of our Smart Room Control System</p>
+            </div>
+            <div class="principle-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>What is the Smart Room Control System?</h3>
+                        <p>Our Smart Room Control System is an Internet of Things (IoT) solution that 
+                            automates various room functions including lighting that will depend to the light intensity and 
+                            window operation  (OPENING & CLOSING) via LDR sensor, 
+                             climate control throughout Digital humidity and temperature sensor (DHT11),
+                             , and ultrasonic security monitoring that detect an intruder that come closer the door
+                             . The system uses sensors to monitor environmental
+                              conditions and automatically adjusts room settings for optimal comfort and energy efficiency.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Key Features</h3>
+                        <ul>
+                            <li><strong>Automatic Lighting:</strong> Lights turn on/off based on ambient light levels or light intensity</li>
+                            <li><strong>Climate Control:</strong> Fan activates when temperature exceeds settle thresholds</li>
+                            <li><strong>Window Automation:</strong> Windows open/close based on light intensity</li>
+                            <li><strong>Ultrasonic Security:</strong> Motion detection with buzzer and LED alerts when objects are 30cm or further</li>
+                            <li><strong>Remote Monitoring:</strong> Real-time control and monitoring via Adafruit IO dashboard</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Technology Stack</h3>
+                        <p>The system is built using ESP32 microcontroller, various sensors (DHT11, LDR, Ultrasonic),
+                             actuators (relays, servo motors, fan and lamp), indicators (LEDs and buzzer),
+                              display system(LCD_I2C Screen)
+                             and communicates via MQTT protocol with Adafruit IO for remote access and control.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Working Principle Section -->
+    <section id="working" style="background-color: #94a4b6;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Working Principle & Technical Explanation</h2>
+                <p>How our Smart Room Control System operates</p>
+            </div>
+            <div class="principle-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Sensor Data Collection</h3>
+                        <p>The system continuously monitors environmental conditions using DHT11
+                             (temperature/humidity), LDR (light), and HC-SR04 ultrasonic sensors(detecting for movementof substance).
+                              This data is processed by the ESP32 microcontroller(as the brain of the system) which serves as the central
+                               processing unit, receiving, processing, and sending commands to control actuators within whole system.</p>
+                    </div>
+                              
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Automated Decision Making</h3>
+                        <p>Based on predefined thresholds, the system automatically controls devices:</p>
+                        <ul>
+                            <li>Lights turn ON when LDR value < 950, OFF when > 1050</li>
+                            <li>Fan activates when temperature exceeds 28°C</li>
+                            <li>Windows open when light level is sufficient and close when dark</li>
+                            <li>Buzzer activates for 2 seconds when objects are detected at 30cm or further</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Ultrasonic Security System</h3>
+                        <p>The HC-SR04 ultrasonic sensor continuously measures distance. When objects are detected 
+                            at 30cm or further, the system triggers a 2-second buzzer alarm and activates the red LED. 
+                            Green LED indicates safe distance (objects closer than 30cm).</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>MQTT Communication</h3>
+                        <p>The system connects to Adafruit IO via MQTT protocol to publish sensor data and receive control 
+                            commands through the dashboard, enabling remote monitoring and control from anywhere.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Manual Override</h3>
+                        <p>All automated functions can be manually controlled
+                             remotely via MQTT commands to Adafruit IO.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Block diagram-->
+    <section id="components">
+        <div class="container" >
+            <div class="section-title">
+                <h2>Block Diagram</h2>
+                <h3>Block Diagram that shows how inputs, indicators, mechanical switches, 
+                    actuators, and display devices connected to Microcontroller</h3>
+                <img src="block diagram.jpg" alt="" style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Schematic diagram-->
+    <section id="components">
+        <div class="container" >
+            <div class="section-title">
+                <h2>Circuit Diagram</h2>
+                <h3>Circuit Diagram that shows how inputs, indicators, mechanical switches(relays), 
+                    actuators, and display devices connected to Microcontroller and the protocol(MQTT)</h3>
+                <img src="circiut.png" alt="" style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Components Section -->
+    <section id="components">
+        <div class="container">
+            <div class="section-title">
+                <h2>Project Components</h2>
+                <p>Hardware and software components used in our Smart Home Automation System</p>
+            </div>
+            <div class="components-grid">
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="esp32.webp" alt="ESP32 Microcontroller">
+                    </div>
+                    <div class="component-content">
+                        <h3>ESP32 Microcontroller</h3>
+                        <p>The brain of our system, handling all sensor data processing, 
+                            system control, and WiFi communication through the dashboard.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="dht11.jpg" alt="DHT11 Sensor">
+                    </div>
+                    <div class="component-content">
+                        <h3>DHT11 Sensor</h3>
+                        <p>Digital humidity and temperature sensor that measures environmental
+                            conditions for automatic climate control and fan operation.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="ldr.webp" alt="LDR Light Sensor">
+                    </div>
+                    <div class="component-content">
+                        <h3>LDR Light Sensor</h3>
+                        <p>Light Dependent Resistor that detects ambient light levels for
+                             automatic lighting control based on light intensity.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="ultrasonic.webp" alt="HC-SR04 Ultrasonic Sensor">
+                    </div>
+                    <div class="component-content">
+                        <h3>HC-SR04 Ultrasonic Sensor</h3>
+                        <p>Distance measurement sensor for security monitoring, triggers
+                             alerts when objects are detected at 30cm or further.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="relay.jpg" alt="Relay Module">
+                    </div>
+                    <div class="component-content">
+                        <h3>Relay Modules</h3>
+                        <p>Controls high-power devices like lights and fans safely
+                             with low-voltage signals from the ESP32.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="servo.jpg" alt="Servo Motor">
+                    </div>
+                    <div class="component-content">
+                        <h3>Servo Motor</h3>
+                        <p>Controls window opening and closing based on light levels
+                             and automation rules with 180-degree movement.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="fan.jpg" alt="12V DC Fan">
+                    </div>
+                    <div class="component-content">
+                        <h3>12V DC Fan</h3>
+                        <p>Cooling fan controlled by relay module, automatically turns
+                             on when temperature exceeds 28°C for climate control.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="lamp.jpg" alt="Lamp">
+                    </div>
+                    <div class="component-content">
+                        <h3>Lamp</h3>
+                        <p>Lighting device controlled by relay module, automatically turns
+                             on/off based on ambient light levels detected by LDR sensor.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="led.jpg" alt="LEDs">
+                    </div>
+                    <div class="component-content">
+                        <h3>LED Indicators</h3>
+                        <p>Green and red LEDs used to indicate security status -
+                             green for safe distance, red for object detection.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="buzzer.webp" alt="Buzzer">
+                    </div>
+                    <div class="component-content">
+                        <h3>Buzzer</h3>
+                        <p>Audio alert device that sounds for 2 seconds when objects 
+                            are detected at 30cm or further for security alerts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progress Documentation Section -->
+    <section id="progress" style="background-color: #9facc0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Documentation of Work Progress</h2>
+                <p>Our journey from concept to implementation</p>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Project Planning & Research</h3>
+                        <p>Defined project scope, researched components, and created 
+                            initial system architecture with ultrasonic security.</p>
+                        <p><strong>Duration:</strong> Week 1</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Component Acquisition & Testing</h3>
+                        <p>Procured all necessary components including HC-SR04 
+                            ultrasonic sensor and tested each one individually.</p>
+                        <p><strong>Duration:</strong> Week 2</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Circuit Design & Assembly</h3>
+                        <p>Created circuit diagrams with ultrasonic sensor integration
+                             and assembled the hardware components.</p>
+                        <p><strong>Duration:</strong> Week 3</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Software Development</h3>
+                        <p>Developed Arduino code for sensor reading, ultrasonic security 
+                            logic, automation, and MQTT communication.</p>
+                        <p><strong>Duration:</strong> Week 4</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Integration & Testing</h3>
+                        <p>Integrated hardware and software components, tested 
+                            ultrasonic security system, and debugged issues.</p>
+                        <p><strong>Duration:</strong> Week 5</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Documentation & Website</h3>
+                        <p>Created comprehensive documentation and developed this
+                             website to showcase the updated project.</p>
+                        <p><strong>Duration:</strong> Week 6</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Status Section -->
+    <section id="status">
+        <div class="container">
+            <div class="section-title">
+                <h2>Project Status & Demonstration</h2>
+                <p>Current state of the project and working demonstrations</p>
+            </div>
+            
+            <div class="status-container">
+                <div class="status-item">
+                    <div class="status-header">
+                        <h3 class="status-title">Hardware Implementation</h3>
+                        <span class="status-badge badge-completed">Completed</span>
+                    </div>
+                    <p>All hardware components including ultrasonic sensor have been successfully
+                         integrated and tested. The system responds correctly to sensor inputs.</p>
+                </div>
+                
+                <div class="status-item">
+                    <div class="status-header">
+                        <h3 class="status-title">Software Development</h3>
+                        <span class="status-badge badge-completed">Completed</span>
+                    </div>
+                    <p>All automation logic, ultrasonic security system, sensor reading, and
+                         MQTT communication code has been implemented and tested successfully.</p>
+                </div>
+                
+                <div class="status-item">
+                    <div class="status-header">
+                        <h3 class="status-title">Ultrasonic Security System</h3>
+                        <span class="status-badge badge-completed">Completed</span>
+                    </div>
+                    <p>Distance monitoring with 30cm threshold, 2-second buzzer 
+                        activation, and LED status indicators fully functional.</p>
+                </div>
+                
+                <div class="status-item">
+                    <div class="status-header">
+                        <h3 class="status-title">Remote Control Interface</h3>
+                        <span class="status-badge badge-completed">Completed</span>
+                    </div>
+                    <p>Adafruit IO dashboard is fully functional, allowing remote
+                         monitoring and control of all system functions including security status.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+     <!--behind the scene-->
+    <section id="behindthescene">
+      <div class="container">
+            <div class="section-title">
+              <h2>Behind The scene</h2>
+              <p>Starting from build up, failures, and achievement</p>
+             </div>
+                <div class="components-grid">
+                    <div class="component-card">
+                        <div class="component-img">
+                        <img src="before.jpg" alt="">
+                        </div>
+                     <div class="component-content">
+                        <h3>Setting up the hardware(RIGHT SIDE)</h3>
+                        <p>Connecting Hardware before embedding the firmware.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="before (2).jpg" alt="">
+                    </div>
+                    <div class="component-content">
+                        <h3>Setting up the hardware(fan side)</h3>
+                        <p>Connecting Hardware before embedding the firmware.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="front.jpg" alt="">
+                    </div>
+                    <div class="component-content">
+                        <h3>Setting up the hardware(FRONT SIDE)</h3>
+                        <p>Connecting Hardware before embedding the firmware.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="Screenshot (11).png" alt="">
+                    </div>
+                    <div class="component-content">
+                        <h3>Codes in arduino IDE </h3>
+                        <p>Codes in arduino before compiling and uploading.</p>
+                    </div>
+                </div>  
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="Screenshot (10).png" alt="">
+                    </div>
+                    <div class="component-content">
+                        <h3>Uploading Done</h3>
+                        <p>compiling and uploading the arduino codes into microcontroller.</p>
+                    </div>
+                </div>
+                <div class="component-card">
+                    <div class="component-img">
+                        <img src="dashboard.PNG" alt="">
+                    </div>
+                    <div class="component-content">
+                        <h3>Adafruit IO dashboard<h3>
+                        <p>Controlling system on the dashboard as IOT.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<section id="behindthescene">
+    <div class="container">
+        <div class="section-title">
+            <h2>Videos of Project Logical Code Embedding and Building Up</h2>
+        </div>
+        
+        <div class="video1" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
+            <div class="video-item" style="flex: 1; min-width: 300px; text-align: center;">
+                <h3>Uploading Failed</h3>
+                <video width="100%" height="auto" controls style="max-width: 400px;">
+                    <source src="error occured.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p>Errors occurred while we were uploading in microcontroller</p>
+            </div>
+            
+            <div class="video-item" style="flex: 1; min-width: 300px; text-align: center;">
+                <h3>Uploading Done</h3>
+                <video width="100%" height="auto" controls style="max-width: 400px;">
+                    <source src="uploading done.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p>Uploading Arduino codes in ESP32 microcontroller was successful done</p>
+            </div>
+            
+            <div class="video-item" style="flex: 1; min-width: 300px; text-align: center;">
+                <h3>Layout of the Project Sample</h3>
+                <video width="100%" height="auto" controls style="max-width: 400px;">
+                    <source src="Layout.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p>Wire Connecting and Front Layout</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Code Section -->
+    <section id="code" style="background-color: #94a4b6;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Code Implementation</h2>
+                <p>Key logical codes used in our Smart Room Automation System</p>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="language">Arduino C++</span>
+                    <span>main.ino</span>
+                </div>
+                <div class="code-content">
+                    <pre><code><span class="code-comment">// Ultrasonic sensor distance measurement</span>
+<span class="code-keyword">float</span> <span class="code-function">measureDistance</span>() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    <span class="code-keyword">long</span> <span class="code-variable">duration</span> = pulseIn(ECHO_PIN, HIGH);
+    <span class="code-keyword">float</span> <span class="code-variable">distance</span> = duration * <span class="code-number">0.034</span> / <span class="code-number">2</span>;
+    
+    <span class="code-keyword">return</span> distance;
+}
+
+<span class="code-comment">// Ultrasonic security system handling</span>
+<span class="code-keyword">void</span> <span class="code-function">handleUltrasonicSensor</span>() {
+    <span class="code-keyword">float</span> <span class="code-variable">distance</span> = measureDistance();
+    
+    <span class="code-comment">// Check if object is 30 cm or further away (>= 30cm)</span>
+    <span class="code-keyword">if</span> (distance >= ULTRASONIC_DISTANCE_THRESHOLD && distance > <span class="code-number">0</span>) {
+        <span class="code-keyword">if</span> (!objectFarDetected) {
+            <span class="code-comment">// Object detected at 30cm or further - activate buzzer and red LED</span>
+            objectFarDetected = <span class="code-keyword">true</span>;
+            digitalWrite(BUZZER_PIN, HIGH);
+            digitalWrite(RED_LED, HIGH);
+            digitalWrite(GREEN_LED, LOW);
+            buzzerActive = <span class="code-keyword">true</span>;
+            lastBuzzerTime = millis();
+            
+            Serial.<span class="code-function">print</span>(<span class="code-string">"🚨 BUZZER ON! Object at: "</span>);
+            Serial.<span class="code-function">print</span>(distance);
+            Serial.<span class="code-function">println</span>(<span class="code-string">" cm (>= 30cm)"</span>);
+        }
+    } <span class="code-keyword">else</span> {
+        <span class="code-comment">// Object is closer than 30cm (< 30cm)</span>
+        <span class="code-keyword">if</span> (objectFarDetected) {
+            objectFarDetected = <span class="code-keyword">false</span>;
+            Serial.<span class="code-function">println</span>(<span class="code-string">"✅ Object is close (< 30cm) - No alert"</span>);
+        }
+        
+        <span class="code-comment">// Green LED ON when object is close (< 30cm)</span>
+        digitalWrite(GREEN_LED, HIGH);
+        digitalWrite(RED_LED, LOW);
+    }
+    
+    <span class="code-comment">// Turn off buzzer after 2 seconds</span>
+    <span class="code-keyword">if</span> (buzzerActive && (millis() - lastBuzzerTime >= buzzerDuration)) {
+        digitalWrite(BUZZER_PIN, LOW);
+        buzzerActive = <span class="code-keyword">false</span>;
+        Serial.<span class="code-function">println</span>(<span class="code-string">"🔇 Buzzer turned off after 2 seconds"</span>);
+    }
+}
+
+<span class="code-comment">// Automatic lighting control based on LDR sensor</span>
+<span class="code-keyword">void</span> <span class="code-function">automaticControl</span>() {
+    <span class="code-keyword">int</span> <span class="code-variable">ldrValues</span> = analogRead(LDR_PIN);
+    <span class="code-keyword">float</span> <span class="code-variable">temp</span> = readTemperature();
+    
+    <span class="code-comment">// Light and window auto control</span>
+    <span class="code-keyword">if</span> (!manualLightControl && !manualWindowControl) {
+        <span class="code-keyword">if</span> (ldrValues < LIGHT_ON_THRESHOLD) {
+            digitalWrite(RELAY1_PIN, HIGH);
+            windowServo.write(<span class="code-number">90</span>);
+        } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (ldrValues > LIGHT_OFF_THRESHOLD) {
+            digitalWrite(RELAY1_PIN, LOW);
+            windowServo.write(<span class="code-number">0</span>);
+        }
+    }
+    
+    <span class="code-comment">// Fan auto control</span>
+    <span class="code-keyword">if</span> (!manualFanControl && temp > -<span class="code-number">100</span> && temp >= TEMP_FAN_ON) {
+        digitalWrite(RELAY2_PIN, HIGH);
+    } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (!manualFanControl) {
+        digitalWrite(RELAY2_PIN, LOW);
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Contact Us</h2>
+                <p>Get in touch with our team for more information</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3>BIZIMANA Adam</h3>
+                            <p>Project Lead</p>
+                            <p>Email: kingnur4154@gmail.com</p>
+                            <p>Phone: +250 796 235 081</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3>DUKUNDWANIMANA Bien Aimee Providence</h3>
+                            <p>Software Developer</p>
+                            <p>Email: prvaimee6@gmail.com</p>
+                            <p>Phone: +250 792 053 499</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h3>Address</h3>
+                            <p>Kigali, Rwanda</p>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <i class="fas fa-home"></i>
+                        <span>Smart Room Control System</span>
+                    </div>
+                    <p>An innovative IoT-based smart room control system with ultrasonic security that brings 
+                        intelligence and convenience to your living space.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#project">Project</a></li>
+                        <li><a href="#working">How It Works</a></li>
+                        <li><a href="#components">Components</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Project Details</h3>
+                    <ul>
+                        <li><a href="#progress">Progress</a></li>
+                        <li><a href="#status">Status</a></li>
+                        <li><a href="#code">Code</a></li>
+                        <li><a href="#team">Team</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#architecture">System Architecture</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Smart Room Control System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('nav ul').classList.toggle('active');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu after clicking
+                document.querySelector('nav ul').classList.remove('active');
+            });
+        });
+
+        // Update active nav link on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
