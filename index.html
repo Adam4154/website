@@ -1072,7 +1072,102 @@
             </div>
         </div>
     </section>
-     <!--behind the scene-->
+   
+    <!-- Code Section -->
+    <section id="code" style="background-color: #94a4b6;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Code Implementation</h2>
+                <p>Key logical codes used in our Smart Room Automation System</p>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="language">Arduino C++</span>
+                    <span>main.ino</span>
+                </div>
+                <div class="code-content">
+                    <pre><code><span class="code-comment">// Ultrasonic sensor distance measurement</span>
+<span class="code-keyword">float</span> <span class="code-function">measureDistance</span>() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    <span class="code-keyword">long</span> <span class="code-variable">duration</span> = pulseIn(ECHO_PIN, HIGH);
+    <span class="code-keyword">float</span> <span class="code-variable">distance</span> = duration * <span class="code-number">0.034</span> / <span class="code-number">2</span>;
+    
+    <span class="code-keyword">return</span> distance;
+}
+
+<span class="code-comment">// Ultrasonic security system handling</span>
+<span class="code-keyword">void</span> <span class="code-function">handleUltrasonicSensor</span>() {
+    <span class="code-keyword">float</span> <span class="code-variable">distance</span> = measureDistance();
+    
+    <span class="code-comment">// Check if object is 30 cm or further away (>= 30cm)</span>
+    <span class="code-keyword">if</span> (distance >= ULTRASONIC_DISTANCE_THRESHOLD && distance > <span class="code-number">0</span>) {
+        <span class="code-keyword">if</span> (!objectFarDetected) {
+            <span class="code-comment">// Object detected at 30cm or further - activate buzzer and red LED</span>
+            objectFarDetected = <span class="code-keyword">true</span>;
+            digitalWrite(BUZZER_PIN, HIGH);
+            digitalWrite(RED_LED, HIGH);
+            digitalWrite(GREEN_LED, LOW);
+            buzzerActive = <span class="code-keyword">true</span>;
+            lastBuzzerTime = millis();
+            
+            Serial.<span class="code-function">print</span>(<span class="code-string">"🚨 BUZZER ON! Object at: "</span>);
+            Serial.<span class="code-function">print</span>(distance);
+            Serial.<span class="code-function">println</span>(<span class="code-string">" cm (>= 30cm)"</span>);
+        }
+    } <span class="code-keyword">else</span> {
+        <span class="code-comment">// Object is closer than 30cm (< 30cm)</span>
+        <span class="code-keyword">if</span> (objectFarDetected) {
+            objectFarDetected = <span class="code-keyword">false</span>;
+            Serial.<span class="code-function">println</span>(<span class="code-string">"✅ Object is close (< 30cm) - No alert"</span>);
+        }
+        
+        <span class="code-comment">// Green LED ON when object is close (< 30cm)</span>
+        digitalWrite(GREEN_LED, HIGH);
+        digitalWrite(RED_LED, LOW);
+    }
+    
+    <span class="code-comment">// Turn off buzzer after 2 seconds</span>
+    <span class="code-keyword">if</span> (buzzerActive && (millis() - lastBuzzerTime >= buzzerDuration)) {
+        digitalWrite(BUZZER_PIN, LOW);
+        buzzerActive = <span class="code-keyword">false</span>;
+        Serial.<span class="code-function">println</span>(<span class="code-string">"🔇 Buzzer turned off after 2 seconds"</span>);
+    }
+}
+
+<span class="code-comment">// Automatic lighting control based on LDR sensor</span>
+<span class="code-keyword">void</span> <span class="code-function">automaticControl</span>() {
+    <span class="code-keyword">int</span> <span class="code-variable">ldrValues</span> = analogRead(LDR_PIN);
+    <span class="code-keyword">float</span> <span class="code-variable">temp</span> = readTemperature();
+    
+    <span class="code-comment">// Light and window auto control</span>
+    <span class="code-keyword">if</span> (!manualLightControl && !manualWindowControl) {
+        <span class="code-keyword">if</span> (ldrValues < LIGHT_ON_THRESHOLD) {
+            digitalWrite(RELAY1_PIN, HIGH);
+            windowServo.write(<span class="code-number">90</span>);
+        } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (ldrValues > LIGHT_OFF_THRESHOLD) {
+            digitalWrite(RELAY1_PIN, LOW);
+            windowServo.write(<span class="code-number">0</span>);
+        }
+    }
+    
+    <span class="code-comment">// Fan auto control</span>
+    <span class="code-keyword">if</span> (!manualFanControl && temp > -<span class="code-number">100</span> && temp >= TEMP_FAN_ON) {
+        digitalWrite(RELAY2_PIN, HIGH);
+    } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (!manualFanControl) {
+        digitalWrite(RELAY2_PIN, LOW);
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+      <!--behind the scene-->
     <section id="behindthescene">
       <div class="container">
             <div class="section-title">
@@ -1170,104 +1265,19 @@
                 </video>
                 <p>Wire Connecting and Front Layout</p>
             </div>
+            <div class="video-item" style="flex: 1; min-width: 300px; text-align: center;">
+                <h3>System not working </h3>
+                <video width="100%" height="auto" controls style="max-width: 400px;">
+                    <source src="not working.mp4" type="video/mp4">
+                </video>
+                <p>Here we were facing the issues of the system to not working whole 
+                    part correctly as we were expecting
+                </p>
+            </div>
         </div>
     </div>
 </section>
 
-    <!-- Code Section -->
-    <section id="code" style="background-color: #94a4b6;">
-        <div class="container">
-            <div class="section-title">
-                <h2>Code Implementation</h2>
-                <p>Key logical codes used in our Smart Room Automation System</p>
-            </div>
-            
-            <div class="code-container">
-                <div class="code-header">
-                    <span class="language">Arduino C++</span>
-                    <span>main.ino</span>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="code-comment">// Ultrasonic sensor distance measurement</span>
-<span class="code-keyword">float</span> <span class="code-function">measureDistance</span>() {
-    digitalWrite(TRIG_PIN, LOW);
-    delayMicroseconds(2);
-    digitalWrite(TRIG_PIN, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(TRIG_PIN, LOW);
-    
-    <span class="code-keyword">long</span> <span class="code-variable">duration</span> = pulseIn(ECHO_PIN, HIGH);
-    <span class="code-keyword">float</span> <span class="code-variable">distance</span> = duration * <span class="code-number">0.034</span> / <span class="code-number">2</span>;
-    
-    <span class="code-keyword">return</span> distance;
-}
-
-<span class="code-comment">// Ultrasonic security system handling</span>
-<span class="code-keyword">void</span> <span class="code-function">handleUltrasonicSensor</span>() {
-    <span class="code-keyword">float</span> <span class="code-variable">distance</span> = measureDistance();
-    
-    <span class="code-comment">// Check if object is 30 cm or further away (>= 30cm)</span>
-    <span class="code-keyword">if</span> (distance >= ULTRASONIC_DISTANCE_THRESHOLD && distance > <span class="code-number">0</span>) {
-        <span class="code-keyword">if</span> (!objectFarDetected) {
-            <span class="code-comment">// Object detected at 30cm or further - activate buzzer and red LED</span>
-            objectFarDetected = <span class="code-keyword">true</span>;
-            digitalWrite(BUZZER_PIN, HIGH);
-            digitalWrite(RED_LED, HIGH);
-            digitalWrite(GREEN_LED, LOW);
-            buzzerActive = <span class="code-keyword">true</span>;
-            lastBuzzerTime = millis();
-            
-            Serial.<span class="code-function">print</span>(<span class="code-string">"🚨 BUZZER ON! Object at: "</span>);
-            Serial.<span class="code-function">print</span>(distance);
-            Serial.<span class="code-function">println</span>(<span class="code-string">" cm (>= 30cm)"</span>);
-        }
-    } <span class="code-keyword">else</span> {
-        <span class="code-comment">// Object is closer than 30cm (< 30cm)</span>
-        <span class="code-keyword">if</span> (objectFarDetected) {
-            objectFarDetected = <span class="code-keyword">false</span>;
-            Serial.<span class="code-function">println</span>(<span class="code-string">"✅ Object is close (< 30cm) - No alert"</span>);
-        }
-        
-        <span class="code-comment">// Green LED ON when object is close (< 30cm)</span>
-        digitalWrite(GREEN_LED, HIGH);
-        digitalWrite(RED_LED, LOW);
-    }
-    
-    <span class="code-comment">// Turn off buzzer after 2 seconds</span>
-    <span class="code-keyword">if</span> (buzzerActive && (millis() - lastBuzzerTime >= buzzerDuration)) {
-        digitalWrite(BUZZER_PIN, LOW);
-        buzzerActive = <span class="code-keyword">false</span>;
-        Serial.<span class="code-function">println</span>(<span class="code-string">"🔇 Buzzer turned off after 2 seconds"</span>);
-    }
-}
-
-<span class="code-comment">// Automatic lighting control based on LDR sensor</span>
-<span class="code-keyword">void</span> <span class="code-function">automaticControl</span>() {
-    <span class="code-keyword">int</span> <span class="code-variable">ldrValues</span> = analogRead(LDR_PIN);
-    <span class="code-keyword">float</span> <span class="code-variable">temp</span> = readTemperature();
-    
-    <span class="code-comment">// Light and window auto control</span>
-    <span class="code-keyword">if</span> (!manualLightControl && !manualWindowControl) {
-        <span class="code-keyword">if</span> (ldrValues < LIGHT_ON_THRESHOLD) {
-            digitalWrite(RELAY1_PIN, HIGH);
-            windowServo.write(<span class="code-number">90</span>);
-        } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (ldrValues > LIGHT_OFF_THRESHOLD) {
-            digitalWrite(RELAY1_PIN, LOW);
-            windowServo.write(<span class="code-number">0</span>);
-        }
-    }
-    
-    <span class="code-comment">// Fan auto control</span>
-    <span class="code-keyword">if</span> (!manualFanControl && temp > -<span class="code-number">100</span> && temp >= TEMP_FAN_ON) {
-        digitalWrite(RELAY2_PIN, HIGH);
-    } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (!manualFanControl) {
-        digitalWrite(RELAY2_PIN, LOW);
-    }
-}</code></pre>
-                </div>
-            </div>
-        </div>
-    </section>
     <!-- Contact Section -->
     <section id="contact">
         <div class="container">
